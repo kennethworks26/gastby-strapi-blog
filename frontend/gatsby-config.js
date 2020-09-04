@@ -1,47 +1,29 @@
 'use strict'
 
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`
+})
+
 module.exports = {
   siteMetadata: {
-    title: 'gatsby-starter-typescript-plus',
-    description: 'A starter kit for TypeScript-based Gatsby projects with sensible defaults.',
-    keywords: 'gatsbyjs, gatsby, javascript, sample, something',
-    siteUrl: 'https://gatsby-starter-typescript-plus.netlify.com',
+    title: 'My super blog',
+    description: 'Gatsby blog with Strapi',
     author: {
-      name: 'Resi Respati',
-      url: 'https://twitter.com/resir014',
-      email: 'resir014@gmail.com'
+      name: 'Strapi team',
+      url: 'https://strapi.io/'
     }
   },
   plugins: [
     {
-      resolve: 'gatsby-source-filesystem',
+      resolve: 'gatsby-source-strapi',
       options: {
-        name: 'content',
-        path: `${__dirname}/src/content`
-      }
-    },
-    {
-      resolve: 'gatsby-transformer-remark',
-      options: {
-        plugins: [
-          {
-            resolve: 'gatsby-remark-responsive-iframe',
-            options: {
-              wrapperStyle: 'margin-bottom: 1rem'
-            }
-          },
-          'gatsby-remark-prismjs',
-          'gatsby-remark-copy-linked-files',
-          'gatsby-remark-smartypants',
-          {
-            resolve: 'gatsby-remark-images',
-            options: {
-              maxWidth: 1140,
-              quality: 90,
-              linkImagesToOriginal: false
-            }
-          }
-        ]
+        apiURL: process.env.API_URL || 'http://localhost:1337',
+        contentTypes: [
+          // List of the Content Types you want to be able to request from Gatsby.
+          'article',
+          'category'
+        ],
+        queryLimit: 1000
       }
     },
     'gatsby-transformer-json',
