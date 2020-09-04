@@ -1,13 +1,12 @@
 import * as React from 'react'
-import Helmet from 'react-helmet'
 import { StaticQuery, graphql } from 'gatsby'
 
 import 'modern-normalize'
 import '../styles/normalize'
 
-import Header from '../components/Header'
 import LayoutRoot from '../components/LayoutRoot'
-import LayoutMain from '../components/LayoutMain'
+
+import ArticlesComponent from '../components/Articles'
 
 interface StaticQueryProps {
   site: {
@@ -17,9 +16,17 @@ interface StaticQueryProps {
       keywords: string
     }
   }
+  allStrapiArticle: {
+    edges: Article[]
+  }
 }
 
-const IndexLayout: React.FC = ({ children }) => (
+interface Props {
+  readonly title?: string
+  readonly children: React.ReactNode
+}
+
+const IndexLayout: React.FC<Props> = ({ children }) => (
   <StaticQuery
     query={graphql`
       query IndexLayoutQuery {
@@ -29,19 +36,35 @@ const IndexLayout: React.FC = ({ children }) => (
             description
           }
         }
+        allStrapiArticle {
+          edges {
+            node {
+              strapiId
+              title
+              category {
+                name
+              }
+              image {
+                childImageSharp {
+                  fluid(maxWidth: 595, quality: 100) {
+                    ...GatsbyImageSharpFluid
+                    ...GatsbyImageSharpFluidLimitPresentationSize
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     `}
     render={(data: StaticQueryProps) => (
       <LayoutRoot>
-        <Helmet
-          title={data.site.siteMetadata.title}
-          meta={[
-            { name: 'description', content: data.site.siteMetadata.description },
-            { name: 'keywords', content: data.site.siteMetadata.keywords }
-          ]}
-        />
-        <Header title={data.site.siteMetadata.title} />
-        <LayoutMain>{children}</LayoutMain>
+        <div className="uk-section">
+          <div className="uk-container uk-container-large">
+            <h1>Strapi blog</h1>
+            <ArticlesComponent articles={data.allStrapiArticle.edges} />
+          </div>
+        </div>
       </LayoutRoot>
     )}
   />
